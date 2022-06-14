@@ -4,19 +4,20 @@ import (
 	"flag"
 	"fmt"
 
-	"realm/dev/lebron/apps/order/rpc/internal/config"
-	"realm/dev/lebron/apps/order/rpc/internal/server"
-	"realm/dev/lebron/apps/order/rpc/internal/svc"
-	"realm/dev/lebron/apps/order/rpc/rpc"
+	"github.com/a11en4sec/lebron/apps/order/rpc/internal/config"
+	"github.com/a11en4sec/lebron/apps/order/rpc/internal/server"
+	"github.com/a11en4sec/lebron/apps/order/rpc/internal/svc"
+	"github.com/a11en4sec/lebron/apps/order/rpc/order"
 
 	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-var configFile = flag.String("f", "etc/rpc.yaml", "the config file")
+var configFile = flag.String("f", "etc/order.yaml", "the config file")
 
 func main() {
 	flag.Parse()
@@ -24,10 +25,12 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 	ctx := svc.NewServiceContext(c)
-	svr := server.NewRpcServer(ctx)
+	svr := server.NewOrderServer(ctx)
+
+	logx.DisableStat()
 
 	s := zrpc.MustNewServer(c.RpcServerConf, func(grpcServer *grpc.Server) {
-		rpc.RegisterRpcServer(grpcServer, svr)
+		order.RegisterOrderServer(grpcServer, svr)
 
 		if c.Mode == service.DevMode || c.Mode == service.TestMode {
 			reflection.Register(grpcServer)

@@ -22,7 +22,27 @@ func NewProductServer(svcCtx *svc.ServiceContext) *ProductServer {
 	}
 }
 
+func (s *ProductServer) Product(ctx context.Context, in *product.ProductItemRequest) (*product.ProductItem, error) {
+	l := logic.NewProductLogic(ctx, s.svcCtx)
+	return l.Product(in)
+}
+
 func (s *ProductServer) Products(ctx context.Context, in *product.ProductRequest) (*product.ProductResponse, error) {
 	l := logic.NewProductsLogic(ctx, s.svcCtx)
 	return l.Products(in)
+}
+
+func (s *ProductServer) ProductList(ctx context.Context, in *product.ProductListRequest) (*product.ProductListResponse, error) {
+	l := logic.NewProductListLogic(ctx, s.svcCtx)
+	return l.ProductList(in)
+}
+
+func (s *ProductServer) OperationProducts(ctx context.Context, in *product.OperationProductsRequest) (*product.OperationProductsResponse, error) {
+	l := logic.NewOperationProductsLogic(ctx, s.svcCtx)
+	return l.OperationProducts(in)
+}
+
+func (s *ProductServer) UpdateProductStock(ctx context.Context, in *product.UpdateProductStockRequest) (*product.UpdateProductStockResponse, error) {
+	l := logic.NewUpdateProductStockLogic(ctx, s.svcCtx)
+	return l.UpdateProductStock(in)
 }
